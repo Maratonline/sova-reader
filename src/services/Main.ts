@@ -1,26 +1,35 @@
-// import TreeMap from "ts-treemap";
-import { readBook } from "./BookReader";
-import { getMyWordsSet, syncWriteFile } from "./GetMyWords";
+import { getMyWordsSet, readBook, syncWriteFile } from "./GetMyWords";
+let MIN_WORD_COUNT = 5;
+let MAX_WORD_COUNT = 40;
 
-const bookReader = (bookWrds: Map<string, number>) => {
+export const bookReader = (bookWrds: Map<string, number>) => {
   const myWrd = (myWrds: Set<string>) => {
     var newWords: string = "";
     console.log("My word LENGTH IS " + myWrds.size);
     console.log("Booke word LENGTH IS " + bookWrds.size);
-    // myWrds.forEach((an) => console.log(an));
-    // for (let [key, value] of bookWrds) {
-    //   if (value > 5 && value < 40 && myWrds.has(key)) {
-    //     bookWrds.delete(key);
-    //   }
-    // }
+    bookWrds.forEach((val: number, key: string) => {
+      if (val > MIN_WORD_COUNT && val < MAX_WORD_COUNT && myWrds.has(key)) {
+        bookWrds.delete(key);
+      }
+    });
     sortedArray(bookWrds).forEach((wr) => (newWords += wr + "\n"));
-
-    syncWriteFile("newWord.txt", newWords);
+    // let newFile: File = new File('newFile.txt')
+    // syncWriteFile(newFile,"newWord.txt", newWords);
     console.log(" the end of the job " + newWords.length);
   };
   getMyWordsSet(myWrd);
 };
-readBook(bookReader, "src/test.pdf");
+
+export function getSimilarWords(
+  file: File,
+  minWrd: number,
+  maxWrd: number
+): File {
+  MIN_WORD_COUNT = minWrd;
+  MAX_WORD_COUNT = maxWrd;
+  readBook(bookReader, file);
+  return file;
+}
 
 function sortedArray(words: Map<string, number>): Array<string> {
   // const treemap = new TreeMap<number, string>();

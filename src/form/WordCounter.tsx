@@ -2,6 +2,8 @@ import { Button, Input } from "@mui/material";
 import React, { useState } from "react";
 import Select from "react-select";
 import fileDownload from "js-file-download";
+import { getSimilarWords } from "../services/Main";
+import { syncWriteFile2 } from "../services/GetMyWords";
 
 const WordCounter = (props: any) => {
   const options = [{ value: "pdf", label: "PDF" }];
@@ -25,7 +27,9 @@ const WordCounter = (props: any) => {
     const formData = new FormData();
     console.log("handle submit" + JSON.stringify(file));
     console.log("handle submit name" + file.name);
-    fileDownload(file, file.name);
+    let newFile = getSimilarWords(file, 5, 40);
+    syncWriteFile2();
+    fileDownload(syncWriteFile2(), "newOne.txt");
 
     formData.append("file", file);
     formData.append("fileName", file.name);
